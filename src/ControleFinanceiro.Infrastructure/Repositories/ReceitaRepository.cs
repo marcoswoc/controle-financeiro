@@ -6,7 +6,7 @@ namespace ControleFinanceiro.Infrastructure.Repositories
 {
     public class ReceitaRepository : Repository<Receita>, IReceitaRepository
     {
-        protected ReceitaRepository(ApplicationDbContext context) : base(context)
+        public ReceitaRepository(ApplicationDbContext context) : base(context)
         {
         }
     }

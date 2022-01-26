@@ -1,18 +1,14 @@
 using System.ComponentModel.DataAnnotations;
 using ControleFinanceiro.Domain.Core;
+using ControleFinanceiro.Domain.Entities.Enums;
 
 namespace ControleFinanceiro.Domain.Entities
 {
     public class Despesa : Entity
     {
-        [MaxLength(100)]
-        [MinLength(3)]
         public string Descricao { get; set; }
-
-        [Required]
         public double Valor { get; set; }
-
-        [Required]
         public DateTime Data { get; set; }
+        public CategoriaType Categoria { get; set; }
     }
 }

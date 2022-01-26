@@ -1,4 +1,5 @@
 using System.ComponentModel.DataAnnotations;
+using ControleFinanceiro.Domain.Entities.Enums;
 
 namespace ControleFinanceiro.Application.DTOs.Despesa
 {
@@ -12,6 +13,8 @@ namespace ControleFinanceiro.Application.DTOs.Despesa
         public double Valor { get; set; }
 
         [Required(ErrorMessage ="Data é Obrigatório")]
-        public DateTime Data { get; set; }  
+        public DateTime Data { get; set; }
+
+        public CategoriaType? Categoria { get; set;}  
     }
 }

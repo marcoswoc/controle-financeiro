@@ -27,7 +27,7 @@ namespace ControleFinanceiro.Application.Services
             if (exists is not null) 
             {
                 response.Success = false;
-                response.Erros.Add($"já existe uma despesa com adescrição {despesaDto.Descricao} para a data {despesaDto.Data.Month}/{despesaDto.Data.Year}");
+                response.Erros.Add($"já existe uma despesa com a descrição {despesaDto.Descricao} para a data {despesaDto.Data.Month}/{despesaDto.Data.Year}");
                 return response;
             }
 
