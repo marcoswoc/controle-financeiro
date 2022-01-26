@@ -39,8 +39,11 @@ namespace ControleFinanceiro.Infrastructure.Repositories
             }
         }
 
-        public async Task<IEnumerable<TEntity>> GetAllAsync()
+        public async Task<IEnumerable<TEntity>> GetAllAsync(Expression<Func<TEntity,bool>>? predicate = null)
         {
+            if (predicate is not null)
+                return await _context.Set<TEntity>().Where(predicate).ToListAsync();
+
             return await _context.Set<TEntity>().ToListAsync();
         } 
 

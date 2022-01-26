@@ -39,10 +39,28 @@ namespace ControleFinanceiro.Application.Services
         }
 
 
-        public async Task<IEnumerable<DespesaDto>> GetAllDespesasAsync()
+        public async Task<ResponseDto<IEnumerable<DespesaDto>>> GetAllDespesasAsync(string? descricao)
         {
-            var despesas = await _despesaRepository.GetAllAsync();
-            return _mapper.Map<IEnumerable<DespesaDto>>(despesas);
+            ResponseDto<IEnumerable<DespesaDto>> response = new();
+            IEnumerable<Despesa> despesas;
+
+            if (!string.IsNullOrEmpty(descricao))            
+                despesas = await _despesaRepository.GetAllAsync(x => x.Descricao == descricao);
+            else
+                despesas = await _despesaRepository.GetAllAsync();
+
+            response.Data = _mapper.Map<IEnumerable<DespesaDto>>(despesas);
+            return response;
+        }
+
+        public async Task<ResponseDto<IEnumerable<DespesaDto>>> GetAllDespesasByDataAsync(string ano, string mes)
+        {
+            ResponseDto<IEnumerable<DespesaDto>> response = new();
+
+            var receitas = await _despesaRepository.GetAllAsync(x => x.Data.Year.ToString() == ano && x.Data.Month.ToString() == mes);
+
+            response.Data = _mapper.Map<IEnumerable<DespesaDto>>(receitas);
+            return response;
         }
 
         public async Task<DespesaDto> GetDespesaByIdAsync(int id)

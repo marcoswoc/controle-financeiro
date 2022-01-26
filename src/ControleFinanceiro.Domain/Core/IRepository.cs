@@ -4,7 +4,7 @@ namespace ControleFinanceiro.Domain.Core
 {
     public interface IRepository<TEntity> where TEntity : class
     {
-         Task<IEnumerable<TEntity>> GetAllAsync();
+         Task<IEnumerable<TEntity>> GetAllAsync(Expression<Func<TEntity,bool>>? predicate = null);
          Task<TEntity> GetByIdAsync(int id);
          Task<TEntity> CreateAsync(TEntity entity);
          Task UpdateAsync(TEntity entity);

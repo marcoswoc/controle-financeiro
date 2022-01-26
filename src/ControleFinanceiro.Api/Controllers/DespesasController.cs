@@ -7,19 +7,19 @@ namespace ControleFinanceiro.Api.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    public class DespesaController : ControllerBase
+    public class DespesasController : ControllerBase
     {
         private readonly IDespesaService _despesaService;
 
-        public DespesaController(IDespesaService despesaService)
+        public DespesasController(IDespesaService despesaService)
         {
             _despesaService = despesaService;
         }
         
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<DespesaDto>>> GetAllDespesaAsync()
+        public async Task<ActionResult<IEnumerable<DespesaDto>>> GetAllDespesaAsync([FromQuery] string? descricao)
         {
-            return Ok(await _despesaService.GetAllDespesasAsync());
+            return Ok(await _despesaService.GetAllDespesasAsync(descricao));
         }
 
         [HttpGet("{id}")]
@@ -28,6 +28,12 @@ namespace ControleFinanceiro.Api.Controllers
             var despesa = await _despesaService.GetDespesaByIdAsync(id);
             if (despesa is null) return NotFound();
             return Ok(despesa);
+        }
+
+        [HttpGet("{ano}/{mes}")]
+        public async Task<ActionResult<IEnumerable<DespesaDto>>> GetAllDespesasByDataAsync([FromRoute] string ano, [FromRoute] string mes)
+        {
+            return Ok(await _despesaService.GetAllDespesasByDataAsync(ano, mes));
         }
 
         [HttpPost]

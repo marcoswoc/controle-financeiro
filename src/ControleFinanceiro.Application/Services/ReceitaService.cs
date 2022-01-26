@@ -9,12 +9,12 @@ namespace ControleFinanceiro.Application.Services
 {
     public class ReceitaService : IReceitaService
     {
-         private readonly IReceitaRepository _ReceitaRepository;
+        private readonly IReceitaRepository _receitaRepository;
         private readonly IMapper _mapper;
 
-        public ReceitaService(IReceitaRepository ReceitaRepository, IMapper mapper)
+        public ReceitaService(IReceitaRepository receitaRepository, IMapper mapper)
         {
-            _ReceitaRepository = ReceitaRepository;
+            _receitaRepository = receitaRepository;
             _mapper = mapper;
         }
 
@@ -22,7 +22,7 @@ namespace ControleFinanceiro.Application.Services
         {
             ResponseDto<ReceitaDto> response = new();            
 
-            var receita = await _ReceitaRepository.CreateAsync(_mapper.Map<Receita>(receitaDto));
+            var receita = await _receitaRepository.CreateAsync(_mapper.Map<Receita>(receitaDto));
             
             response.Data = _mapper.Map<ReceitaDto>(receita); 
 
@@ -30,38 +30,56 @@ namespace ControleFinanceiro.Application.Services
         }
 
 
-        public async Task<IEnumerable<ReceitaDto>> GetAllReceitasAsync()
+        public async Task<ResponseDto<IEnumerable<ReceitaDto>>> GetAllReceitasAsync(string? descricao)
         {
-            var Receitas = await _ReceitaRepository.GetAllAsync();
-            return _mapper.Map<IEnumerable<ReceitaDto>>(Receitas);
+            ResponseDto<IEnumerable<ReceitaDto>> response = new();
+            IEnumerable<Receita> receitas;
+
+            if(string.IsNullOrEmpty(descricao))
+                receitas = await _receitaRepository.GetAllAsync();
+            else
+                receitas = await  _receitaRepository.GetAllAsync(x => x.Descricao == descricao);
+            
+            response.Data = _mapper.Map<IEnumerable<ReceitaDto>>(receitas);
+            return response;
+        }
+
+        public async Task<ResponseDto<IEnumerable<ReceitaDto>>> GetAllReceitasByDataAsync(int ano, int mes)
+        {
+            ResponseDto<IEnumerable<ReceitaDto>> response = new();
+
+            var receitas = await _receitaRepository.GetAllAsync(x => x.Data.Year == ano && x.Data.Month == mes);
+
+            response.Data = _mapper.Map<IEnumerable<ReceitaDto>>(receitas);
+            return response;
         }
 
         public async Task<ReceitaDto> GetReceitaByIdAsync(int id)
         {
-            var Receita = await _ReceitaRepository.GetByIdAsync(id);
-            return _mapper.Map<ReceitaDto>(Receita);
+            var receita = await _receitaRepository.GetByIdAsync(id);
+            return _mapper.Map<ReceitaDto>(receita);
         }
 
         public async Task<ReceitaDto> UpdateReceitaAsync(int id, CreateReceitaDto ReceitaDto)
         {
-            var Receita = await _ReceitaRepository.GetByIdAsync(id);
+            var receita = await _receitaRepository.GetByIdAsync(id);
             
-            if (Receita is null) return null;
+            if (receita is null) return null;
             
-            await _ReceitaRepository.UpdateAsync(_mapper.Map(ReceitaDto, Receita));
+            await _receitaRepository.UpdateAsync(_mapper.Map(ReceitaDto, receita));
 
             return await GetReceitaByIdAsync(id);
         }
 
         public async Task<bool> DeleteReceitaAsync(int id)
         {
-            var Receita = await _ReceitaRepository.GetByIdAsync(id);
+            var receita = await _receitaRepository.GetByIdAsync(id);
 
-            if(Receita is null) return false;
+            if(receita is null) return false;
 
-            await _ReceitaRepository.DeleteAsync(id);
+            await _receitaRepository.DeleteAsync(id);
 
             return true;
-        }
+        } 
     }
 }

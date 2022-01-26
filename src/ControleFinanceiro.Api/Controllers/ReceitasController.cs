@@ -7,20 +7,20 @@ namespace ControleFinanceiro.Api.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    public class ReceitaController : ControllerBase
+    public class ReceitasController : ControllerBase
     {
 
         private readonly IReceitaService _receitaService;
 
-        public ReceitaController(IReceitaService receitaService)
+        public ReceitasController(IReceitaService receitaService)
         {
             _receitaService = receitaService;
         }
         
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<ReceitaDto>>> GetAllReceitaAsync()
+        public async Task<ActionResult<IEnumerable<ReceitaDto>>> GetAllReceitaAsync([FromQuery] string? descricao)
         {
-            return Ok(await _receitaService.GetAllReceitasAsync());
+            return Ok(await _receitaService.GetAllReceitasAsync(descricao));
         }
 
         [HttpGet("{id}")]
@@ -29,6 +29,12 @@ namespace ControleFinanceiro.Api.Controllers
             var receita = await _receitaService.GetReceitaByIdAsync(id);
             if (receita is null) return NotFound();
             return Ok(receita);
+        }
+
+        [HttpGet("{ano}/{mes}")]
+        public async Task<ActionResult<IEnumerable<ReceitaDto>>> GetAllReceitasByDataAsync([FromRoute] int ano, [FromRoute] int mes)
+        {
+            return Ok(await _receitaService.GetAllReceitasByDataAsync(ano, mes));
         }
 
         [HttpPost]

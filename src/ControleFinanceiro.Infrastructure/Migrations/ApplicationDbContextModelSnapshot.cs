@@ -75,7 +75,7 @@ namespace ControleFinanceiro.Infrastructure.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Receitas");
+                    b.ToTable("Receitas", (string)null);
                 });
 #pragma warning restore 612, 618
         }

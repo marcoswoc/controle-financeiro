@@ -26,6 +26,7 @@ builder.Services.AddScoped<IDespesaRepository, DespesaRepository>();
 builder.Services.AddScoped<IDespesaService, DespesaService>();
 builder.Services.AddScoped<IReceitaRepository, ReceitaRepository>();
 builder.Services.AddScoped<IReceitaService, ReceitaService>();
+builder.Services.AddScoped<IResumoService, ResumoService>();
 
 builder.Services.AddAutoMapper(typeof(MappingProfile));
 var app = builder.Build();
