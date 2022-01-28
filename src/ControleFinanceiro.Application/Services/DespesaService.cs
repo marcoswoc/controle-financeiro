@@ -45,7 +45,7 @@ namespace ControleFinanceiro.Application.Services
             IEnumerable<Despesa> despesas;
 
             if (!string.IsNullOrEmpty(descricao))            
-                despesas = await _despesaRepository.GetAllAsync(x => x.Descricao == descricao);
+                despesas = await _despesaRepository.GetAllAsync(x => x.Descricao.Contains(descricao));
             else
                 despesas = await _despesaRepository.GetAllAsync();
 

@@ -28,12 +28,12 @@ namespace ControleFinanceiro.Application.Services
 
             var receitasValorTotal = receitas.Sum(x => x.Valor);
             var despesasValorTotal = despesas.Sum(x => x.Valor);
-            var categoriasValor = despesas.GroupBy(x => x.Categoria).Select(x => new ValorCategoriaDto {Categoria = x.Key, Valor = x.Sum(s => s.Valor)} );
+            var categoriasValor = despesas.GroupBy(x => x.Categoria).Select(x => new ValorCategoriaDto {Categoria = x.Key, Valor = Math.Round(x.Sum(s => s.Valor))} );
 
             response.Data = new ResumoDto
             {
-                ReceitasValorTotal = receitasValorTotal,
-                DespesasValorTotal = despesasValorTotal,
+                ReceitasValorTotal = Math.Round(receitasValorTotal, 2),
+                DespesasValorTotal = Math.Round(despesasValorTotal, 2),
                 Saldo = Math.Round(receitasValorTotal - despesasValorTotal, 2),
                 CategoriasValor = categoriasValor
             };

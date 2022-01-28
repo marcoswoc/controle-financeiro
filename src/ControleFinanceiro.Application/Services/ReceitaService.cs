@@ -38,7 +38,7 @@ namespace ControleFinanceiro.Application.Services
             if(string.IsNullOrEmpty(descricao))
                 receitas = await _receitaRepository.GetAllAsync();
             else
-                receitas = await  _receitaRepository.GetAllAsync(x => x.Descricao == descricao);
+                receitas = await  _receitaRepository.GetAllAsync(x => x.Descricao.Contains(descricao));
             
             response.Data = _mapper.Map<IEnumerable<ReceitaDto>>(receitas);
             return response;
