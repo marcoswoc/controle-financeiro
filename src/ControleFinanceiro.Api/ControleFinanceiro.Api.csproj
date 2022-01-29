@@ -30,4 +30,5 @@
     <ProjectReference Include="..\ControleFinanceiro.Application\ControleFinanceiro.Application.csproj" />
   </ItemGroup>
 
+   
 </Project>
