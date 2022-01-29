@@ -4,32 +4,31 @@ using ControleFinanceiro.IntegrationTests.Helpers;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace ControleFinanceiro.IntegrationTests
+namespace ControleFinanceiro.IntegrationTests;
+
+public class WebApplicationFactoryFixture : IDisposable
 {
-    public class WebApplicationFactoryFixture : IDisposable
+    public readonly WebApplicationFactory<Program> Factory;
+
+    public WebApplicationFactoryFixture()
     {
-        public readonly WebApplicationFactory<Program> Factory;
+        Factory = new WebApplicationFactory<Program>().BuildApplicationFactory();
+    }
 
-        public WebApplicationFactoryFixture()
+    protected virtual void Dispose(bool disposing)
+    {
+        if (disposing)
         {
-            Factory = new WebApplicationFactory<Program>().BuildApplicationFactory();
+            using var _scope = (Factory.Services.GetRequiredService<IServiceScopeFactory>()).CreateScope();
+            using var _context = _scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+            _context?.Database.EnsureDeleted();
+            Factory.Dispose();
         }
+    }
 
-        protected virtual void Dispose(bool disposing)
-        {
-            if (disposing)
-            {
-                using var _scope = (Factory.Services.GetRequiredService<IServiceScopeFactory>()).CreateScope();
-                using var _context = _scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
-                _context?.Database.EnsureDeleted();
-                Factory.Dispose();
-            }
-        }
-
-        public void Dispose()
-        {
-            Dispose(true);
-            GC.SuppressFinalize(this);
-        }
+    public void Dispose()
+    {
+        Dispose(true);
+        GC.SuppressFinalize(this);
     }
 }

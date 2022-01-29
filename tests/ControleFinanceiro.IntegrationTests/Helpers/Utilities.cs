@@ -7,54 +7,54 @@ using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace ControleFinanceiro.IntegrationTests.Helpers
+namespace ControleFinanceiro.IntegrationTests.Helpers;
+
+public static class Utilities
 {
-    public static class Utilities
+    public static WebApplicationFactory<Program> BuildApplicationFactory(this WebApplicationFactory<Program> factory)
     {
-        public static WebApplicationFactory<Program> BuildApplicationFactory(this WebApplicationFactory<Program> factory)
+        var connectionString = $"Data Source={Guid.NewGuid()}.db";
+        return factory.WithWebHostBuilder(builder =>
         {
-            var connectionString = $"Data Source={Guid.NewGuid()}.db";
-            return factory.WithWebHostBuilder(builder =>
+            builder.UseEnvironment("Testing");
+            builder.ConfigureServices(services =>
             {
-                builder.UseEnvironment("Testing");
-                builder.ConfigureServices(services =>
+                var descriptor = services.SingleOrDefault(
+                    d => d.ServiceType ==
+                typeof(DbContextOptions<ApplicationDbContext>));
+
+                services.Remove(descriptor);
+
+                services.AddDbContext<ApplicationDbContext>(options =>
                 {
-                    var descriptor = services.SingleOrDefault(
-                        d => d.ServiceType ==
-                    typeof(DbContextOptions<ApplicationDbContext>));
-
-                    services.Remove(descriptor);
-
-                    services.AddDbContext<ApplicationDbContext>(options =>
-                    {
-                        options.UseSqlite(connectionString);
-                    });
-
-                    var sp = services.BuildServiceProvider();
-
-                    using var scope = sp.CreateScope();
-                    var scopedServices = scope.ServiceProvider;
-                    var context = scopedServices.GetRequiredService<ApplicationDbContext>();
-                    context.Database.EnsureCreated();
-                    InitializeDbForTests(context);
+                    options.UseSqlite(connectionString);
                 });
+
+                var sp = services.BuildServiceProvider();
+
+                using var scope = sp.CreateScope();
+                var scopedServices = scope.ServiceProvider;
+                var context = scopedServices.GetRequiredService<ApplicationDbContext>();
+                context.Database.EnsureCreated();
+                InitializeDbForTests(context);
             });
-        } 
+        });
+    }
 
-        public static void InitializeDbForTests(ApplicationDbContext db)
+    public static void InitializeDbForTests(ApplicationDbContext db)
+    {
+        db.Receitas.RemoveRange(db.Receitas);
+        db.Despesas.RemoveRange(db.Despesas);
+
+        db.Receitas.AddRange(GetSeedingReceitas());
+        db.Despesas.AddRange(GetSeedingDespesas());
+        db.SaveChanges();
+    }
+
+    public static Receita[] GetSeedingReceitas()
+    {
+        return new Receita[]
         {
-            db.Receitas.RemoveRange(db.Receitas);
-            db.Despesas.RemoveRange(db.Despesas);
-
-            db.Receitas.AddRange(GetSeedingReceitas());
-            db.Despesas.AddRange(GetSeedingDespesas());
-            db.SaveChanges();
-        }
-
-        public static Receita[] GetSeedingReceitas()
-        {
-            return new Receita[]
-            {
                 new()
                 {
                     Id = 1,
@@ -69,13 +69,13 @@ namespace ControleFinanceiro.IntegrationTests.Helpers
                     Data = DateTime.Now,
                     Valor = 1000
                 }
-            };
-        }
+        };
+    }
 
-        public static Despesa[] GetSeedingDespesas()
+    public static Despesa[] GetSeedingDespesas()
+    {
+        return new Despesa[]
         {
-            return new Despesa[]
-            {
                 new()
                 {
                     Id = 1,
@@ -141,30 +141,29 @@ namespace ControleFinanceiro.IntegrationTests.Helpers
                     Valor = 100
                 }
 
-            };
-        }
-
-        public static WebApplicationFactory<Program> RebuildDb(this WebApplicationFactory<Program> factory)
-        {
-            return factory.WithWebHostBuilder(builder =>
-            {
-                builder.ConfigureServices(services =>
-                {
-                    var serviceProvider = services.BuildServiceProvider();
-                    using var scope = serviceProvider.CreateScope();
-                    var scopedServices = scope.ServiceProvider;
-                    var db = scopedServices
-                        .GetRequiredService<ApplicationDbContext>();
-                    ReinitializeDbForTests(db);
-                });
-            });
-        }
-        public static void ReinitializeDbForTests(ApplicationDbContext db)
-        {
-            db.Receitas.RemoveRange(db.Receitas.ToList());
-            db.Despesas.RemoveRange(db.Despesas.ToList());
-            InitializeDbForTests(db);
-        }
-
+        };
     }
+
+    public static WebApplicationFactory<Program> RebuildDb(this WebApplicationFactory<Program> factory)
+    {
+        return factory.WithWebHostBuilder(builder =>
+        {
+            builder.ConfigureServices(services =>
+            {
+                var serviceProvider = services.BuildServiceProvider();
+                using var scope = serviceProvider.CreateScope();
+                var scopedServices = scope.ServiceProvider;
+                var db = scopedServices
+                    .GetRequiredService<ApplicationDbContext>();
+                ReinitializeDbForTests(db);
+            });
+        });
+    }
+    public static void ReinitializeDbForTests(ApplicationDbContext db)
+    {
+        db.Receitas.RemoveRange(db.Receitas.ToList());
+        db.Despesas.RemoveRange(db.Despesas.ToList());
+        InitializeDbForTests(db);
+    }
+
 }
