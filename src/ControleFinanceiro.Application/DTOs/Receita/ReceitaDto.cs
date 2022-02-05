@@ -1,7 +1,6 @@
-namespace ControleFinanceiro.Application.DTOs.Receita
+namespace ControleFinanceiro.Application.DTOs.Receita;
+
+public class ReceitaDto : CreateReceitaDto
 {
-    public class ReceitaDto : CreateReceitaDto
-    {
-        public int Id { get; set; }
-    }
+    public int Id { get; set; }
 }

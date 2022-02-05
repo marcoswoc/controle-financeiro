@@ -1,7 +1,6 @@
-namespace ControleFinanceiro.Application.DTOs.Despesa
+namespace ControleFinanceiro.Application.DTOs.Despesa;
+
+public class DespesaDto : CreateDespesaDto
 {
-    public class DespesaDto : CreateDespesaDto
-    {
-        public int Id { get; set; }
-    }
+    public int Id { get; set; }
 }

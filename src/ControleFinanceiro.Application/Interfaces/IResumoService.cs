@@ -1,10 +1,9 @@
 using ControleFinanceiro.Application.DTOs;
 using ControleFinanceiro.Application.DTOs.Resumo;
 
-namespace ControleFinanceiro.Application.Interfaces
+namespace ControleFinanceiro.Application.Interfaces;
+
+public interface IResumoService
 {
-    public interface IResumoService
-    {
-         Task<ResponseDto<ResumoDto>> GetResumoAsync(int ano, int mes);
-    }
+    Task<ResponseDto<ResumoDto>> GetResumoAsync(int ano, int mes);
 }
