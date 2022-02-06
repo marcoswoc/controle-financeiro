@@ -19,7 +19,6 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
 {
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
-    // options.UseInMemoryDatabase("DataBaseControleFinaceiro");
 });
 
 builder.Services.AddScoped<IDespesaRepository, DespesaRepository>();
